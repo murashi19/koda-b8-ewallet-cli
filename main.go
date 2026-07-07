@@ -30,17 +30,19 @@ type Authentication struct{}
 
 func CreatePassword() string {
 
-	password := Input("Enter a strong password: ")
-	confirm := Input("Confirm your password: ")
-	if password != confirm {
-		fmt.Println("Passwords do not match !!, please enter to back")
-		fmt.Scanf("&\n")
-		CreatePassword()
+	for {
+		password := Input("Enter a strong password: ")
+		confirm := Input("Confirm your password: ")
+		if password == confirm {
+			return password
+		}
+		fmt.Println("Password tidak sama")
 	}
-	return password
+
 }
 
 func (a *Authentication) Register() {
+	defer fmt.Println("Leaving Register Menu")
 	ClearScreen()
 
 	username := Input("What is your name: ")
@@ -68,6 +70,7 @@ func (a *Authentication) Register() {
 }
 func (a *Authentication) Login() {
 	ClearScreen()
+	defer fmt.Println("Login Process Finished")
 
 	for {
 		email := Input("Enter your Email: ")
@@ -101,8 +104,15 @@ func (a *Authentication) ListUser() {
 
 func (a *Authentication) SearchUser() {
 	ClearScreen()
+	defer Recover()
+
 	fmt.Println("Pencarian User")
 	input := Input("\nSearch User : ")
+
+	if input == "" {
+
+		panic("Username tidak boleh kosong")
+	}
 
 	for _, user := range users {
 		if input == user.Username {
@@ -119,6 +129,7 @@ func (a *Authentication) Logout() {
 	main()
 }
 func Dashboard() {
+	defer fmt.Println("Exit Dashboard")
 	ClearScreen()
 
 	var auth Auth = &Authentication{}
@@ -149,7 +160,7 @@ func (a *Authentication) ForgotPassword() {
 
 	for i, user := range users {
 		if user.Email == email {
-			users[i].Password = newpassword
+			users[i].Password = HashPassword(newpassword)
 			fmt.Println("Update Password Success, press enter to back...")
 			fmt.Scanf("&\n")
 			return
@@ -165,7 +176,10 @@ var scanner = bufio.NewScanner(os.Stdin)
 func Input(promt string) string {
 	fmt.Print(promt)
 	if !scanner.Scan() {
-		panic(scanner.Err())
+		if err := scanner.Err(); err != nil {
+			panic(err)
+		}
+		panic("Input dihentikan")
 	}
 	return scanner.Text()
 }
@@ -183,7 +197,11 @@ func HashPassword(password string) string {
 
 func Recover() {
 	if err := recover(); err != nil {
+
+		fmt.Println("===================")
+		fmt.Println("SYSTEM ERROR")
 		fmt.Println(err)
+		fmt.Println("===================")
 	}
 }
 
