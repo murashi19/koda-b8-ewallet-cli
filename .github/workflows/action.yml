@@ -19,13 +19,13 @@ jobs:
       - name: Installing GO dependencies
         run: go mod tidy
       - name: build app
-        run: go build
+        run: go build -o program main.go
       - name: Save artifact
         uses: actions/upload-artifact@v7
         id: upload-program
         with:
           name: build-result
-          path: program/
+          path: ./program
   release-app:
     name: "Release builded app"
     needs: program-auth-image
@@ -36,11 +36,11 @@ jobs:
           with:
             artifact-ids: ${{needs.program-auth-image.outputs.output1}}
         - name: Compress artifact
-          run: zip -r programcli.zip ./*
+          run: zip -r programcli.zip ./
         - name: Release
           uses: softprops/action-gh-release@v3
           with:
-            files: programcli.zip
+            files: program.zip
             overwrite_files: true
             token: ${{secrets.GITHUB_TOKEN}}
             tag_name: ${{github.ref_name}}
