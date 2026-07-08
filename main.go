@@ -36,7 +36,7 @@ func CreatePassword() string {
 		if password == confirm {
 			return password
 		}
-		fmt.Println("Password tidak sama")
+		panic("Password tidak sama")
 	}
 
 }
@@ -78,13 +78,13 @@ func (a *Authentication) Login() {
 
 		for _, user := range users {
 			if user.Email == email && user.Password == password {
-				fmt.Println("Login Success, press enter to dashboard")
-				fmt.Scanf("&\n")
+				fmt.Println("Login Success")
+				EnterBack()
 				Dashboard()
 			}
 		}
-		fmt.Println("Wrong Email or Password, please enter to back...")
-		fmt.Scanf("&\n")
+		fmt.Println("Wrong Email or Password")
+		EnterBack()
 		ClearScreen()
 	}
 
@@ -96,8 +96,8 @@ func (a *Authentication) ListUser() {
 	for i, user := range users {
 		fmt.Println(i+1, user)
 	}
-	fmt.Println("\nEnter to Back Dashboard")
-	fmt.Scanf("&\n")
+	fmt.Println("\nBack Dashboard")
+	EnterBack()
 	Dashboard()
 
 }
@@ -110,15 +110,14 @@ func (a *Authentication) SearchUser() {
 	input := Input("\nSearch User : ")
 
 	if input == "" {
-
 		panic("Username tidak boleh kosong")
 	}
 
 	for _, user := range users {
 		if input == user.Username {
 			fmt.Println("\nUser telah ditemukan, ", user)
-			fmt.Println("\nBack to dashboard, press enter")
-			fmt.Scanf("&\n")
+			fmt.Println("\nBack to dashboard")
+			EnterBack()
 			Dashboard()
 		}
 	}
@@ -161,8 +160,8 @@ func (a *Authentication) ForgotPassword() {
 	for i, user := range users {
 		if user.Email == email {
 			users[i].Password = HashPassword(newpassword)
-			fmt.Println("Update Password Success, press enter to back...")
-			fmt.Scanf("&\n")
+			fmt.Println("Update Password Success")
+			EnterBack()
 			return
 		}
 	}
@@ -197,12 +196,15 @@ func HashPassword(password string) string {
 
 func Recover() {
 	if err := recover(); err != nil {
-
-		fmt.Println("===================")
-		fmt.Println("SYSTEM ERROR")
 		fmt.Println(err)
-		fmt.Println("===================")
+		EnterBack()
 	}
+}
+
+func EnterBack() {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Press Enter to back...")
+	reader.ReadString('\n')
 }
 
 func main() {
@@ -234,9 +236,7 @@ func main() {
 		default:
 			ClearScreen()
 			fmt.Println("\nInvalid Choose menu, enter back to menu")
-			fmt.Scanf("&\n")
-			main()
-
+			EnterBack()
 		}
 
 	}

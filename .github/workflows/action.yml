@@ -1,0 +1,63 @@
+name: Authentication Flow
+run-name: ${{github.event.head.commit.messages}}
+on: 
+  push:
+    tags:
+        - v*
+jobs:
+  program-auth-image:
+    runs-on: ubuntu-latest
+    outputs:
+      output1: ${{steps.upload-program.outputs.artifact-id}}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v7
+      - name: Setup GO version
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.26'
+      - name: Installing GO dependencies
+        run: go mod tidy
+      - name: build app
+        run: go build
+      - name: Save artifact
+        uses: actions/upload-artifact@v7
+        id: upload-program
+        with:
+          name: build-result
+          path: program/
+  release-app:
+    name: "Release builded app"
+    needs: program-auth-image
+    runs-on: ubuntu-latest
+    steps:
+        - name: Download artifact
+          uses: actions/download-artifact@v8
+          with:
+            artifact-ids: ${{needs.program-auth-image.outputs.output1}}
+        - name: Compress artifact
+          run: zip -r programCLI.zip ./*
+        - name: Release
+          uses: softprops/action-gh-release@v3
+          with:
+            files: programCLI.zip
+            overwrite_files: true
+            token: ${{secrets.GITHUB_TOKEN}}
+            tag_name: ${{github.ref_name}}
+  on-succes:
+    name: "Build image"
+    needs: program-auth-image
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v7
+        - name: Login to docker
+          run: echo -n ${{secrets.GITHUB_TOKEN}}| docker login ghcr.io --username ${{github.actor}} --password-stdin
+        - name: Download artifact
+          uses: actions/download-artifact@v8
+          with:
+            artifact-ids: ${{needs.program-auth-image.outputs.output1}}
+        - name: Build images
+          run: docker build . -t ghcr.io/${{github.repository}}:latest
+        - name: Push to ghcr.io
+          run: docker push ghcr.io/${{github.repository}}:latest
+            
