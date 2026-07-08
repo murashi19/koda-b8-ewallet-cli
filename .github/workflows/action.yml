@@ -36,11 +36,11 @@ jobs:
           with:
             artifact-ids: ${{needs.program-auth-image.outputs.output1}}
         - name: Compress artifact
-          run: zip -r programCLI.zip ./*
+          run: zip -r programcli.zip ./*
         - name: Release
           uses: softprops/action-gh-release@v3
           with:
-            files: programCLI.zip
+            files: programcli.zip
             overwrite_files: true
             token: ${{secrets.GITHUB_TOKEN}}
             tag_name: ${{github.ref_name}}
