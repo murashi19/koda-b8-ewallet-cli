@@ -59,3 +59,62 @@ func (r *TransactionRepository) GetTransactionTypeIDByName(ctx context.Context, 
 
 	return id, nil
 }
+
+func (r *TransactionRepository) GetTransactionByWalletID(
+	ctx context.Context,
+	walletID int64,
+) ([]models.TransactionDetail, error) {
+
+	rows, err := r.db.Query(
+		ctx,
+		`
+        SELECT
+            tt.name,
+            t.sender_wallet_id,
+            t.receiver_wallet_id,
+            t.amount,
+            t.status,
+            t.created_at
+        FROM transactions t
+        JOIN transaction_types tt
+            ON tt.id = t.transaction_type_id
+        WHERE
+            t.sender_wallet_id = $1
+            OR
+            t.receiver_wallet_id = $1
+        ORDER BY t.created_at DESC
+        `,
+		walletID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var histories []models.TransactionDetail
+
+	for rows.Next() {
+
+		var history models.TransactionDetail
+
+		err := rows.Scan(
+			&history.Type,
+			&history.SenderWalletID,
+			&history.ReceiverWalletID,
+			&history.Amount,
+			&history.Status,
+			&history.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		histories = append(histories, history)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return histories, nil
+}
