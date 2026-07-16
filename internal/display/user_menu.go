@@ -3,6 +3,7 @@ package display
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/models"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/service"
@@ -42,7 +43,7 @@ func (m *UserMenu) CreateUser() {
 	}
 
 	fmt.Println("User created successfully.")
-	utils.ClearScreen()
+	time.Sleep(2 * time.Second)
 }
 
 func (m *UserMenu) ListUsers() {

@@ -64,6 +64,16 @@ func (s *WalletService) TopUp(ctx context.Context, req models.TopUpRequest) erro
 	if err != nil {
 		return err
 	}
+
+	// transaction
+	transactionTypeID, err := transactionRepo.GetTransactionTypeIDByName(
+		ctx,
+		tx,
+		"TOPUP",
+	)
+	if err != nil {
+		return err
+	}
 	// Update Balance
 	err = walletRepo.UpdateBalance(
 		ctx,
@@ -74,10 +84,20 @@ func (s *WalletService) TopUp(ctx context.Context, req models.TopUpRequest) erro
 		return err
 	}
 
-	// TODO:
 	// Save transaction
 
-	_ = transactionRepo
+	transaction := models.Transaction{
+		SenderWalletID:    nil,
+		ReceiverWalletID:  &wallet.ID,
+		TransactionTypeID: transactionTypeID,
+		Amount:            req.Amount,
+		Status:            "SUCCESS",
+	}
+
+	err = transactionRepo.CreateTransaction(ctx, tx, transaction)
+	if err != nil {
+		return err
+	}
 
 	err = tx.Commit(ctx)
 	if err != nil {
