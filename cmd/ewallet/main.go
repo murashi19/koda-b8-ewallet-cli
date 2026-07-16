@@ -30,14 +30,18 @@ func main() {
 	time.Sleep(1 * time.Second)
 
 	userService := service.NewUserService(conn)
-
 	menu := display.NewUserMenu(userService)
+
+	walletService := service.NewWalletService(conn)
+	walletMenu := display.NewWalletMenu(walletService)
 
 	for {
 		utils.ClearScreen()
 		fmt.Println("===== E-Wallet =====")
 		fmt.Println("1. Create User")
 		fmt.Println("2. List Users")
+		fmt.Println("3. Show Balance")
+		fmt.Println("4. Transfer")
 		fmt.Println("0. Exit")
 
 		var choose int
@@ -51,6 +55,10 @@ func main() {
 			menu.CreateUser()
 		case 2:
 			menu.ListUsers()
+		case 3:
+			walletMenu.ShowBalance()
+		case 4:
+			// walletMenu.Transfer()
 		case 0:
 			fmt.Println("Thank you for using E-Wallet Apps Bye👋")
 			return

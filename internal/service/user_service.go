@@ -12,9 +12,7 @@ type UserService struct {
 	db *pgx.Conn
 }
 
-func NewUserService(
-	db *pgx.Conn,
-) *UserService {
+func NewUserService(db *pgx.Conn) *UserService {
 	return &UserService{
 		db: db,
 	}
@@ -54,8 +52,8 @@ func (s *UserService) CreateUser(ctx context.Context, user models.User) error {
 
 	wallet := models.Wallet{
 		UserID:   userID,
-		Balance:  0,
-		Currency: "IDR",
+		Balance:  models.DefaultBalance,
+		Currency: models.DefaultCurrency,
 	}
 
 	err = walletRepo.CreateWallet(ctx, wallet)
