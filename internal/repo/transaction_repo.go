@@ -17,7 +17,6 @@ func NewTransactionRepository(db DBTX) *TransactionRepository {
 	}
 }
 func (r *TransactionRepository) CreateTransaction(ctx context.Context, tx pgx.Tx, transaction models.Transaction) error {
-
 	_, err := tx.Exec(
 		ctx,
 		`
@@ -28,8 +27,7 @@ func (r *TransactionRepository) CreateTransaction(ctx context.Context, tx pgx.Tx
 			amount,
 			status
 		)
-		VALUES ($1, $2, $3, $4, $5)
-		`,
+		VALUES ($1, $2, $3, $4, $5)`,
 		transaction.SenderWalletID,
 		transaction.ReceiverWalletID,
 		transaction.TransactionTypeID,
@@ -41,7 +39,6 @@ func (r *TransactionRepository) CreateTransaction(ctx context.Context, tx pgx.Tx
 }
 
 func (r *TransactionRepository) GetTransactionTypeIDByName(ctx context.Context, tx pgx.Tx, name string) (int64, error) {
-
 	var id int64
 	err := tx.QueryRow(
 		ctx,
@@ -60,11 +57,7 @@ func (r *TransactionRepository) GetTransactionTypeIDByName(ctx context.Context, 
 	return id, nil
 }
 
-func (r *TransactionRepository) GetTransactionByWalletID(
-	ctx context.Context,
-	walletID int64,
-) ([]models.TransactionDetail, error) {
-
+func (r *TransactionRepository) GetTransactionByWalletID(ctx context.Context, walletID int64) ([]models.TransactionDetail, error) {
 	rows, err := r.db.Query(
 		ctx,
 		`
@@ -94,7 +87,6 @@ func (r *TransactionRepository) GetTransactionByWalletID(
 	var histories []models.TransactionDetail
 
 	for rows.Next() {
-
 		var history models.TransactionDetail
 
 		err := rows.Scan(
