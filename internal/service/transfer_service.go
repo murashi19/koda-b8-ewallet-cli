@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/models"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/repo"
 )
@@ -32,8 +33,7 @@ func (s *WalletService) Transfer(ctx context.Context, req models.TransferRequest
 	}()
 
 	// Repository
-	walletRepo := repo.NewWalletRepository(tx)
-	transactionRepo := repo.NewTransactionRepository(tx)
+	walletRepo, transactionRepo := s.repositories(tx)
 
 	// Sender Wallet
 	senderWallet, err := walletRepo.GetWalletByUserID(
@@ -59,15 +59,11 @@ func (s *WalletService) Transfer(ctx context.Context, req models.TransferRequest
 	}
 
 	// Transaction Type
-	transactionTypeID, err := transactionRepo.GetTransactionTypeIDByName(
+	transactionTypeID, err := s.getTransactionTypeID(
 		ctx,
 		tx,
-		"TRANSFER",
+		"TOPUP",
 	)
-	if err != nil {
-		return err
-	}
-
 	// Deduct Sender
 	err = walletRepo.UpdateBalance(
 		ctx,
@@ -112,4 +108,19 @@ func (s *WalletService) Transfer(ctx context.Context, req models.TransferRequest
 	}
 
 	return nil
+}
+
+func (s *WalletService) getTransactionTypeID(
+	ctx context.Context,
+	tx pgx.Tx,
+	name string,
+) (int64, error) {
+
+	transactionRepo := repo.NewTransactionRepository(tx)
+
+	return transactionRepo.GetTransactionTypeIDByName(
+		ctx,
+		tx,
+		name,
+	)
 }

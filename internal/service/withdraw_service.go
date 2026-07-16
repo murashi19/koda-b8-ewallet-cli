@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/models"
-	"github.com/murashi19/koda-b8-ewallet-cli/internal/repo"
 )
 
 func (s *WalletService) Withdraw(ctx context.Context, req models.WithdrawRequest) error {
@@ -28,8 +27,7 @@ func (s *WalletService) Withdraw(ctx context.Context, req models.WithdrawRequest
 	}()
 
 	// Repository
-	walletRepo := repo.NewWalletRepository(tx)
-	transactionRepo := repo.NewTransactionRepository(tx)
+	walletRepo, transactionRepo := s.repositories(tx)
 
 	// Get Wallet
 	wallet, err := walletRepo.GetWalletByUserID(ctx, req.UserID)
