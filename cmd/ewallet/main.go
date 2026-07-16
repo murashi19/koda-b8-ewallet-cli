@@ -41,7 +41,7 @@ func main() {
 		fmt.Println("1. Create User")
 		fmt.Println("2. List Users")
 		fmt.Println("3. Show Balance")
-		fmt.Println("4. Transfer")
+		fmt.Println("4. TopUp")
 		fmt.Println("0. Exit")
 
 		var choose int
@@ -58,7 +58,7 @@ func main() {
 		case 3:
 			walletMenu.ShowBalance()
 		case 4:
-			// walletMenu.Transfer()
+			walletMenu.TopUp()
 		case 0:
 			fmt.Println("Thank you for using E-Wallet Apps Bye👋")
 			return

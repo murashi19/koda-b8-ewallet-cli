@@ -42,6 +42,7 @@ func (m *UserMenu) CreateUser() {
 	}
 
 	fmt.Println("User created successfully.")
+	utils.ClearScreen()
 }
 
 func (m *UserMenu) ListUsers() {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/murashi19/koda-b8-ewallet-cli/internal/models"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/service"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/utils"
 )
@@ -27,7 +28,7 @@ func (m *WalletMenu) ShowBalance() {
 	fmt.Print("User ID : ")
 	fmt.Scan(&userID)
 
-	wallet, err := m.walletService.GetWalletByUserID(
+	wallet, err := m.walletService.GetWalletDetailByUserID(
 		context.Background(),
 		userID,
 	)
@@ -41,8 +42,39 @@ func (m *WalletMenu) ShowBalance() {
 	fmt.Println()
 	fmt.Println("===== WALLET =====")
 	fmt.Printf("User ID  : %s\n", wallet.UserName)
-	fmt.Printf("Balance  : Rp%d\n", wallet.Balance)
+	fmt.Printf("Balance  : Rp %d\n", wallet.Balance)
 	fmt.Printf("Currency : %s\n", wallet.Currency)
+
+	utils.EnterBack()
+}
+
+func (m *WalletMenu) TopUp() {
+
+	utils.ClearScreen()
+
+	var req models.TopUpRequest
+
+	fmt.Println("===== TOP UP =====")
+
+	fmt.Print("User ID : ")
+	fmt.Scan(&req.UserID)
+
+	fmt.Print("Amount : ")
+	fmt.Scan(&req.Amount)
+
+	err := m.walletService.TopUp(
+		context.Background(),
+		req,
+	)
+
+	if err != nil {
+		fmt.Println("Error:", err)
+		utils.EnterBack()
+		return
+	}
+
+	fmt.Println()
+	fmt.Println("Top Up Success!")
 
 	utils.EnterBack()
 }

@@ -10,8 +10,8 @@ type Wallet struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
-
 type WalletDetail struct {
+	UserID   int64
 	UserName string
 	Balance  int64
 	Currency string
