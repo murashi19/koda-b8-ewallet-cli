@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/murashi19/koda-b8-ewallet-cli/internal/app"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/service"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/utils"
 )
@@ -17,13 +18,11 @@ func NewWalletMenu(walletService *service.WalletService) *WalletMenu {
 		walletService: walletService,
 	}
 }
-func (m *WalletMenu) ShowBalance() {
+func (m *WalletMenu) ShowBalance(session *app.Session) {
 	utils.ClearScreen()
-	var userID int64
 
 	fmt.Println("===== SHOW BALANCE =====")
-	fmt.Print("User ID : ")
-	fmt.Scan(&userID)
+	userID := session.CurrentUser.ID
 
 	wallet, err := m.walletService.GetWalletDetailByUserID(
 		context.Background(),

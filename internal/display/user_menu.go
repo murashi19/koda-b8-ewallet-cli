@@ -22,21 +22,24 @@ func NewUserMenu(userService *service.UserService) *UserMenu {
 
 func (m *UserMenu) CreateUser() {
 
-	var user models.User
+	var req models.RegisterRequest
 
 	fmt.Print("Name : ")
-	fmt.Scan(&user.Name)
+	fmt.Scan(&req.Name)
 
 	fmt.Print("Email : ")
-	fmt.Scan(&user.Email)
+	fmt.Scan(&req.Email)
 
 	fmt.Print("Password : ")
-	fmt.Scan(&user.Password)
+	fmt.Scan(&req.Password)
 
 	fmt.Print("Phone Number : ")
-	fmt.Scan(&user.PhoneNumber)
+	fmt.Scan(&req.PhoneNumber)
 
-	err := m.userService.CreateUser(context.Background(), user)
+	err := m.userService.CreateUser(
+		context.Background(),
+		req,
+	)
 	if err != nil {
 		fmt.Println("Error :", err)
 		return

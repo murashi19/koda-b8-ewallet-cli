@@ -6,16 +6,15 @@ import (
 	"os"
 	"text/tabwriter"
 
+	"github.com/murashi19/koda-b8-ewallet-cli/internal/app"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/utils"
 )
 
-func (m *WalletMenu) TransactionHistory() {
+func (m *WalletMenu) TransactionHistory(session *app.Session) {
 
 	utils.ClearScreen()
-	var userID int64
 
-	fmt.Print("User ID : ")
-	fmt.Scanln(&userID)
+	userID := session.CurrentUser.ID
 
 	histories, err := m.walletService.GetTransactionHistory(
 		context.Background(),

@@ -4,18 +4,18 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/murashi19/koda-b8-ewallet-cli/internal/app"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/models"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/utils"
 )
 
-func (m *WalletMenu) Transfer() {
+func (m *WalletMenu) Transfer(session *app.Session) {
 
 	var req models.TransferRequest
 
 	fmt.Println("===== Transfer =====")
 
-	fmt.Print("Sender User ID   : ")
-	fmt.Scan(&req.SenderUserID)
+	req.SenderUserID = session.CurrentUser.ID
 
 	fmt.Print("Receiver User ID : ")
 	fmt.Scan(&req.ReceiverUserID)

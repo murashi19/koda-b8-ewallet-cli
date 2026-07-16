@@ -4,16 +4,18 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/murashi19/koda-b8-ewallet-cli/internal/app"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/models"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/utils"
 )
 
-func (m *WalletMenu) TopUp() {
+func (m *WalletMenu) TopUp(session *app.Session) {
 
 	utils.ClearScreen()
 
 	var req models.TopUpRequest
 
+	req.UserID = session.CurrentUser.ID
 	fmt.Println("===== TOP UP =====")
 
 	fmt.Print("User ID : ")
