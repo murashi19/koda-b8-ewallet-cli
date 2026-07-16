@@ -19,12 +19,10 @@ func NewWalletRepository(db DBTX) *WalletRepository {
 }
 
 func (r *WalletRepository) CreateWallet(ctx context.Context, wallet models.Wallet) error {
-
 	query := `INSERT INTO wallets (user_id,balance,currency)
 		VALUES ($1,$2,$3);`
 
-	_, err := r.db.Exec(
-		ctx,
+	_, err := r.db.Exec(ctx,
 		query,
 		wallet.UserID,
 		wallet.Balance,
@@ -39,23 +37,13 @@ func (r *WalletRepository) CreateWallet(ctx context.Context, wallet models.Walle
 }
 
 func (r *WalletRepository) GetWalletByUserID(ctx context.Context, userID int64) (models.Wallet, error) {
-
-	query := `
-		SELECT
-			id,
-			user_id,
-			balance,
-			currency,
-			created_at,
-			updated_at
+	query := `SELECT id, user_id, balance, currency, created_at, updated_at
 		FROM wallets
-		WHERE user_id = $1;
-	`
+		WHERE user_id = $1;`
 
 	var wallet models.Wallet
 
-	err := r.db.QueryRow(
-		ctx,
+	err := r.db.QueryRow(ctx,
 		query,
 		userID,
 	).Scan(
@@ -82,10 +70,9 @@ func (r *WalletRepository) UpdateBalance(ctx context.Context, walletID int64, de
 			updated_at = CURRENT_TIMESTAMP
 		WHERE
 			id = $2
-			AND balance + $1 >= 0;
-	`
-	result, err := r.db.Exec(
-		ctx,
+			AND balance + $1 >= 0;`
+
+	result, err := r.db.Exec(ctx,
 		query,
 		delta,
 		walletID,
@@ -102,23 +89,16 @@ func (r *WalletRepository) UpdateBalance(ctx context.Context, walletID int64, de
 }
 
 func (r *WalletRepository) GetWalletDetailByUserID(ctx context.Context, userID int64) (models.WalletDetail, error) {
-
 	query := `
-		SELECT
-			u.id,
-			u.name,
-			w.balance,
-			w.currency
+		SELECT u.id, u.name, w.balance, w.currency
 		FROM wallets AS w
 		INNER JOIN users AS u
 			ON w.user_id = u.id
-		WHERE u.id = $1;
-	`
+		WHERE u.id = $1;`
 
 	var wallet models.WalletDetail
 
-	err := r.db.QueryRow(
-		ctx,
+	err := r.db.QueryRow(ctx,
 		query,
 		userID,
 	).Scan(
