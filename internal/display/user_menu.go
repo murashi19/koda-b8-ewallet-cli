@@ -6,6 +6,7 @@ import (
 
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/models"
 	"github.com/murashi19/koda-b8-ewallet-cli/internal/service"
+	"github.com/murashi19/koda-b8-ewallet-cli/internal/utils"
 )
 
 type UserMenu struct {
@@ -41,4 +42,27 @@ func (m *UserMenu) CreateUser() {
 	}
 
 	fmt.Println("User created successfully.")
+}
+
+func (m *UserMenu) ListUsers() {
+
+	utils.ClearScreen()
+	users, err := m.userService.GetAllUsers(context.Background())
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("%-5s %-20s %-30s %-15s\n", "ID", "NAME", "EMAIL", "BALANCE")
+
+	for _, user := range users {
+		fmt.Printf(
+			"%-5d %-20s %-30s Rp%d\n",
+			user.ID,
+			user.Name,
+			user.Email,
+			user.Balance,
+		)
+	}
+	utils.EnterBack()
 }

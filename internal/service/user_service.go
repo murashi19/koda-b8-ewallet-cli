@@ -20,6 +20,17 @@ func NewUserService(
 	}
 }
 
+func (s *UserService) GetAllUsers(ctx context.Context) ([]models.UserBalance, error) {
+	repo := repo.NewUserRepository(s.db)
+
+	users, err := repo.GetAllUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 func (s *UserService) CreateUser(ctx context.Context, user models.User) error {
 
 	tx, err := s.db.Begin(ctx)

@@ -37,6 +37,7 @@ func main() {
 		utils.ClearScreen()
 		fmt.Println("===== E-Wallet =====")
 		fmt.Println("1. Create User")
+		fmt.Println("2. List Users")
 		fmt.Println("0. Exit")
 
 		var choose int
@@ -48,13 +49,14 @@ func main() {
 
 		case 1:
 			menu.CreateUser()
-
+		case 2:
+			menu.ListUsers()
 		case 0:
 			fmt.Println("Thank you for using E-Wallet Apps Bye👋")
 			return
-
 		default:
 			fmt.Println("Invalid menu")
+			utils.EnterBack()
 		}
 
 	}
