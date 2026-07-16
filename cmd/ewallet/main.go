@@ -43,6 +43,7 @@ func main() {
 		fmt.Println("3. Show Balance")
 		fmt.Println("4. TopUp")
 		fmt.Println("5. Transaction History")
+		fmt.Println("6. Withdraw")
 		fmt.Println("0. Exit")
 
 		var choose int
@@ -62,6 +63,8 @@ func main() {
 			walletMenu.TopUp()
 		case 5:
 			walletMenu.TransactionHistory()
+		case 6:
+			walletMenu.Withdraw()
 		case 0:
 			fmt.Println("Thank you for using E-Wallet Apps Bye👋")
 			return

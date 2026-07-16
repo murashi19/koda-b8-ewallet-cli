@@ -127,3 +127,31 @@ func (m *WalletMenu) TransactionHistory() {
 func formatRupiah(amount int64) string {
 	return fmt.Sprintf("Rp%d", amount)
 }
+
+func (m *WalletMenu) Withdraw() {
+
+	var req models.WithdrawRequest
+
+	fmt.Println("===== Withdraw =====")
+
+	fmt.Print("User ID : ")
+	fmt.Scan(&req.UserID)
+
+	fmt.Print("Amount : ")
+	fmt.Scan(&req.Amount)
+
+	err := m.walletService.Withdraw(
+		context.Background(),
+		req,
+	)
+	if err != nil {
+		fmt.Println()
+		fmt.Println("Withdraw failed:", err)
+		return
+	}
+
+	fmt.Println()
+	fmt.Println("Withdraw success!")
+	utils.EnterBack()
+
+}
