@@ -58,40 +58,26 @@ func main() {
 			continue
 		}
 
-		wallet, err := walletService.GetWalletDetailByUserID(
-			context.Background(),
-			session.CurrentUser.ID,
-		)
-
-		if err != nil {
-			fmt.Println("Failed to fetch wallet:", err)
-			utils.EnterBack()
-			continue
-		}
-
-		printUserMenu(session, wallet.Balance)
+		printUserMenu(session)
 		choice := utils.ReadMenuChoice("Choose : ")
 
 		switch choice {
 		case 1:
 			walletMenu.ShowBalance(session)
 		case 2:
-			walletMenu.TopUp(session)
+			userMenu.ListUsers()
 		case 3:
-			walletMenu.Withdraw(session)
+			walletMenu.TopUp(session)
 		case 4:
-			walletMenu.Transfer(session)
+			walletMenu.Withdraw(session)
 		case 5:
-			walletMenu.TransactionHistory(session)
+			walletMenu.Transfer(session)
 		case 6:
-			// userMenu.ShowProfile(session) // perlu dibuat jika belum ada
+			walletMenu.TransactionHistory(session)
 		case 7:
 			session.Logout()
 			fmt.Println("You have been logged out.")
 			utils.EnterBack()
-		case 0:
-			fmt.Println("Thank you for using E-Wallet 👋")
-			return
 		default:
 			fmt.Println("⚠️  Invalid menu, please enter a number from the list.")
 			utils.EnterBack()
@@ -106,16 +92,15 @@ func printGuestMenu() {
 	fmt.Println("0. Exit")
 }
 
-func printUserMenu(session *app.Session, balance int64) {
+func printUserMenu(session *app.Session) {
 	fmt.Println("==================================")
 	fmt.Printf("Welcome, %s\n", session.CurrentUser.Name)
 	fmt.Println("==================================")
 	fmt.Println("1. Show Balance")
-	fmt.Println("2. Top Up")
-	fmt.Println("3. Withdraw")
-	fmt.Println("4. Transfer")
-	fmt.Println("5. Transaction History")
-	fmt.Println("6. My Profile")
+	fmt.Println("2. List Users")
+	fmt.Println("3. Top Up")
+	fmt.Println("4. Withdraw")
+	fmt.Println("5. Transfer")
+	fmt.Println("6. Transaction History")
 	fmt.Println("7. Logout")
-	fmt.Println("0. Exit")
 }

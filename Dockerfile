@@ -2,16 +2,18 @@ FROM golang:alpine AS builder
 
 WORKDIR /app
 
+COPY go.mod go.sum ./
+
+RUN go mod download
+
 COPY . .
 
-RUN go mod tidy
+RUN CGO_ENABLED=0 GOOS=linux go build -o ewallet .
 
-RUN go build -o program main.go
-
-FROM alpine:latest
+FROM postgres:alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/program /app/
+COPY --from=builder /app/ewallet .
 
-CMD ["/app/program"]
+CMD ["./ewallet"]

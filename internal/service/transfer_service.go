@@ -62,7 +62,7 @@ func (s *WalletService) Transfer(ctx context.Context, req models.TransferRequest
 	transactionTypeID, err := s.getTransactionTypeID(
 		ctx,
 		tx,
-		"TOPUP",
+		"TRANSFER",
 	)
 	// Deduct Sender
 	err = walletRepo.UpdateBalance(

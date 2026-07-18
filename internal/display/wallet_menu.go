@@ -45,5 +45,5 @@ func (m *WalletMenu) ShowBalance(session *app.Session) {
 }
 
 func formatRupiah(amount int64) string {
-	return fmt.Sprintf("Rp%d", amount)
+	return fmt.Sprintf("Rp %d", amount)
 }

@@ -1,0 +1,81 @@
+name: E-Wallet CI/CD
+run-name: ${{ github.event.head_commit.message }}
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-program:
+    name: Build Application
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - name: Download Dependencies
+        run: go mod download
+      - name: Run Tests
+        run: go test ./...
+      - name: Build Application
+        run: |
+          go build -o ewallet .
+      - name: Upload Artifact
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ewallet-cli
+          path: ./ewallet
+
+  release-app:
+    name: Release Binary
+    needs: build-program
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ needs.build-program.outputs.artifact-id }}
+      - name: Compress Binary
+        run: zip -r ewallet-cli.zip .
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ewallet-cli.zip
+          overwrite_files: true
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docker-image:
+    name: Build & Push Docker Image
+    needs: build-program
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Login to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
+          -u "${{ github.actor }}" \
+          --password-stdin
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -t ghcr.io/${{ github.repository }}:latest \
+            -t ghcr.io/${{ github.repository }}:${{ github.ref_name }} \
+            .
+      - name: Push Docker Images
+        run: |
+          docker push ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:${{ github.ref_name }}
